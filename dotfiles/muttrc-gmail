@@ -1,0 +1,70 @@
+source "gpg2 -dq $HOME/.gmail.gpg |"
+
+set realname="MDrights"
+set from="psychi2009@gmail.com"
+set use_from=yes
+
+set folder = imaps://imap.gmail.com/
+set imap_user = 'psychi2009@gmail.com'
+set imap_pass = $my_pass
+set spoolfile = +INBOX
+set record = "+[Gmail]/Sent Mail"
+set postponed = "+[Gmail]/Drafts"
+set mbox="+[Gmail]/All Mail"
+set trash="+[Gmail]/Trash"
+
+set smtp_url = 'smtps://psychi2009@smtp.gmail.com'
+set smtp_pass = $my_pass
+set record=""
+set editor = "vi"
+set charset = "utf-8"
+set ssl_starttls = yes
+set ssl_force_tls = yes
+
+set sort = threads
+auto_view text/html
+set message_cachedir=~/.mutt/cache
+set header_cache=~/.mutt/cache
+
+
+macro index gi "<change-folder>=INBOX<enter>" "Go to inbox"
+macro index gs "<change-folder>=[Gmail]/Starred<enter>" "Go to starred messages"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "Go to drafts"
+macro index gp "<change-folder>=[Gmail]/Spam<enter>" "Go to Spam"
+
+#
+# Color definitions
+#
+
+#color normal white default
+color hdrdefault red default
+color quoted brightblue default
+color signature red default
+color indicator brightyellow red
+color error brightred default
+color status yellow blue
+color tree magenta default	# the thread tree in the index menu
+color tilde magenta default
+color message brightcyan default
+color markers brightcyan default
+color attachment brightmagenta default
+color search default green	# how to hilite search patterns in the pager
+
+color header brightred default ^(From|Subject):
+color body magenta default "(ftp|http|https)://[^ ]+"	# point out URLs
+color body magenta default [-a-z_0-9.]+@[-a-z_0-9.]+	# e-mail addresses
+color underline brightgreen default
+
+# attributes when using a mono terminal
+#mono header underline ^(From|Subject):
+mono quoted bold
+
+# Key binding: Vi
+bind pager j next-line
+bind pager k previous-line
+bind attach,index,pager \CN next-page
+bind attach,index,pager \CP previous-page
+bind pager g top
+bind pager G bottom
+bind attach,index g first-entry
+bind attach,index G last-entry

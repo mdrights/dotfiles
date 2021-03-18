@@ -1,0 +1,115 @@
+pipeline {
+  agent { node { label 'base' } }
+  triggers { cron('H 9-18 * * 1-5') }
+
+  stages {
+    stage('Work on AKS') {
+      steps {
+        script {   
+        properties([
+            parameters([
+                string(defaultValue: '', description: 'The repo you want to operate:', name: 'GIT_REPO', trim: false), 
+                choice(
+                    choices: ['dev', 'sit', 'uat', 'prod'], 
+                    description: 'The AKS namespace you want to operate:', 
+                    name: 'DESTENV')])
+        ])
+        }
+
+
+        // INSERT ANOTHER REPO HERE IF YOU NEED TO CHECKOUT.
+
+        script {
+            def vaultAddr = 'https://vault.pru.intranet.asia'
+
+            if ( DESTENV == 'dev' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-dev-az1-devpruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-dev-az1-devpruexpert/token-sgrass-dev-az1-devpruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-dev-az1-devpruexpert'
+            }
+
+            if ( DESTENV == 'sit' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-dev-az1-pruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-dev-az1-pruexpert/token-sgrass-dev-az1-pruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-dev-az1-pruexpert'
+            }
+
+            if ( DESTENV == 'uat' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-uat-az1-uatpruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-uat-az1-uatpruexpert/token-sgrass-uat-az1-uatpruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-uat-az1-uatpruexpert'
+            }
+
+            if ( DESTENV == 'prod' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-r6eb4m-az1-sgrass-prd-az1-pruexpert'
+                env.vaultPath = 'kv2/sgrass/prod/prd/r6eb4m/az1/sgrass-prd-az1-pruexpert/token-sgrass-prd-az1-pruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-prd-az1-pruexpert'
+            }
+
+            def vaultConfiguration = [
+                $class: 'VaultConfiguration',
+                vaultUrl: "${vaultAddr}",
+                vaultCredentialId: "${vaultAppRole}"
+            ]
+
+            def vaultSecrets = [
+                [ $class: 'VaultSecret', path: "${vaultPath}", secretValues: [
+                    // set the token as kubeconfig environment variable
+                    [ $class: 'VaultSecretValue', envVar: 'kubeconfig', vaultKey: "token" ]
+                ]]
+            ]
+ 
+            withVault([configuration: vaultConfiguration, vaultSecrets: vaultSecrets]) {
+              sh '''
+                set +x
+
+                echo "---- copy the kubeconfig into a file ----" 
+                echo "${kubeconfig}" > ${WORKSPACE}/kubeconfig
+                #cat ${WORKSPACE}/kubeconfig
+
+                echo "---- preparing options ----"
+                echo $KUBE_NAMESPACE
+                # export KUBE_NAMESPACE="sgrass-dev-az1-devpruexpert"
+                export KC_OPTS=${KC_OPTS}" --kubeconfig=${WORKSPACE}/kubeconfig"
+                export KC_OPTS=${KC_OPTS}" --insecure-skip-tls-verify=true"
+                export KC_OPTS=${KC_OPTS}" --namespace=${KUBE_NAMESPACE}"
+                 
+                echo "---- prepared options ----"
+                echo "---- preparing alias ----"
+                alias kc="kubectl ${KC_OPTS} $*"
+                echo "---- alias prepared ----"
+                 
+                echo "---- applying manifest ----"
+                 
+#### NOTE: WRITE YOUR OWN COMMANDS HERE: ####
+
+                PODST=$(kc get pods)
+                echo "$PODST" |grep -v 'Running' | tee /tmp/rtms-pod-probe.log
+                 
+#### NOTE: WRITE YOUR OWN COMMANDS ABOVE ####
+
+                echo "---- Clean the kubeconfig ----"
+                rm ${WORKSPACE}/kubeconfig
+                echo "---- Done ----"
+
+                # Fail this stage if all pods are running.
+                echo "$PODST" |sed '1 d' |grep -v 'Running'
+              '''
+            }
+        }
+      }
+    }   
+  }
+  post {
+    success {
+      script {
+        env.RES = sh(script: "cat /tmp/rtms-pod-probe.log", returnStdout: true).trim()
+        emailext body: "${env.RES}", subject: "Oops, You have UNUSUAL pods in ${DESTENV}!", to: 'chouniu.yang@prudential.com.cn'
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+[app] (name=fbrun)
+  [Position]	(CENTER)	{0 0}
+  [Layer]	{2}
+[end]
+[app] (name=Telegram) (class=TelegramDesktop)
+  [Dimensions]	{64% 96%}
+  [Layer]	{2}
+  [Close]	{yes}
+[end]
+[app] (name=Navigator) (class=Firefox) (role=browser)
+  [Workspace]	{1}
+  [Dimensions]	{100% 97%}
+  [Position]	(UPPERLEFT)	{0% -1%}
+[end]

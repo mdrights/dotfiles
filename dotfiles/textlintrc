@@ -1,0 +1,47 @@
+{
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "no-todo": true,
+    "en-spell": false,
+    "@textlint-rule/no-unmatched-pair": true,
+    "@textlint-rule/preset-google": true,
+
+    "common-misspellings": {
+      "ignore": []
+    },
+
+    "no-dead-link": {
+      "checkRelative": true,
+      "baseURI": null,
+      "ignore": [],
+      "preferGET": [],
+      "ignoreRedirects": false,
+      "retry": 3,
+      "userAgent": "textlint-rule-no-dead-link/1.0"
+    },
+
+    "terminology": {
+      "defaultTerms": true,
+      "skip": ["Blockquote"],
+      "terms": [
+        "JavaScript",
+        "Internet",
+        "ESLint",
+        "npm",
+        ["front[- ]end(\\w*)", "frontend$1"],
+        ["back[- ]end(\\w*)", "backend$1"],
+        ["hot[- ]key", "hotkey"],
+        ["repo\\b", "repository"],
+        ["CLI tool(s?)", "command line tool$1"],
+        ["id['’]?s", "IDs"],
+        ["(\\w+[^.?!]\\)? )webpack", "$1webpack"],
+        ["(\\w+[^.?!]\\)? )internet", "$1Internet"]
+      ],
+      "exclude": [
+        "CSS"
+      ]
+    }
+  }
+}

@@ -1,0 +1,12 @@
+*foreground: rgb:ff/ef/d5
+*background: #555753
+*faceSize: 14
+
+*faceName: Serif Mono
+*vt100*geometry: 60*80
+
+! xcalc settings
+!# include ".config/xresources.d/xcalc/xcalc.conf"
+
+! urxvt colours 
+# include ".config/xresources.d/antix.conf"

@@ -1,0 +1,29 @@
+## Anonymity Distribution /etc/hosts
+
+## Defaults
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+## End of defaults
+
+## Anonymity Distribution specific
+127.0.0.1 host.localdomain host
+## End of Anonymity Distribution specific
+
+## Custom domains
+149.154.167.99 telegram.org
+216.58.214.228 www.google.com
+138.201.14.212 check.torproject.org
+138.201.14.197 deb.torproject.org
+94.23.250.81 www.whonix.org
+23.239.16.110 dnsleaktest.com
+192.30.253.113 https://github.com
+64.50.233.100 ftp.us.debian.org
+133.242.99.74 security.debian.org
+185.70.40.182 protonmail.com
+## End of Custom Domains
+
+## End of Anonymity Distribution /etc/hosts

@@ -1,0 +1,70 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=2000
+SAVEHIST=1000
+setopt autocd
+setopt appendhistory share_history autocd extendedglob nomatch notify
+unsetopt beep
+
+bindkey -e
+#bindkey -v
+bindkey '^R' history-incremental-search-backward
+bindkey '^i' expand-or-complete-prefix
+#bindkey  "\e[2~" quoted-insert
+# End of lines configured by zsh-newuser-install
+
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/user/.zshrc'
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+# Added by user here.
+REPORTTIME=10
+setopt hist_ignore_all_dups appendhistory share_history
+setopt auto_cd extended_glob ksh_glob nomatch notify
+unsetopt beep
+unsetopt CASE_GLOB
+
+autoload zmv
+
+alias ls="ls $LS_OPTIONS"
+alias ll="ls -al $LS_OPTIONS"
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias grep="grep --colour=auto"
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias gits='git status'
+alias gpg='gpg2'
+
+lsp ()
+{
+	ls -1 "/var/log/packages/$@"* |xargs -i basename {}
+}
+
+#%{\e[0;31m%}%m%{\e[0m%}
+# source /usr/share/git-core/contrib/completion/git-prompt.sh		#on Debian
+# source /usr/doc/git-2.20.1/contrib/completion/git-prompt.sh		#on Slackware
+source $HOME/.git-prompt.sh	
+setopt PROMPT_SUBST ; PS1='[%n@%m %c$(__git_ps1 " (%s)")]\$ '
+export PS1="%? [%~]
+ %# "
+
+export PATH=$HOME/bin:$PATH:/sbin:/usr/sbin
+## export https_proxy=http://localhost:8118
+export EDITOR=vim
+export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
+
+# Powerline
+#. /usr/local/repo/powerline/powerline/bindings/zsh/powerline.zsh
+#
+
+# Tmux
+# If not running interactively, do not do anything
+#[[ $- != *i* ]] && return
+#[[ -z "$TMUX" ]] && exec tmux
+
+# Syntax Highlighting 
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

@@ -1,0 +1,35 @@
+# Last Modified: Wed Jan 15 13:25:36 2020
+#include <tunables/global>
+
+#
+
+
+/usr/bin/monit {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  capability dac_override,
+  capability dac_read_search,
+  capability sys_ptrace,
+
+  deny ptrace peer=unconfined,
+
+  ptrace trace peer=/home/linus/bin/go-ipfs/ipfs,
+  ptrace trace peer=/usr/sbin/nginx,
+  ptrace trace peer=/usr/sbin/ntpd,
+  ptrace trace peer=/usr/sbin/sshd,
+
+  /proc/ r,
+  /proc/** r,
+  /usr/bin/monit mr,
+  /var/lib/monit/ rw,
+  /var/lib/monit/** rw,
+  owner /etc/monit/conf-enabled/ rw,
+  owner /etc/monit/conf.d/ rw,
+  owner /etc/monit/monitrc rw,
+  owner /run/monit.pid rw,
+  owner /var/lib/monit/id rw,
+  owner /var/lib/monit/state rw,
+  owner /var/log/monit.log rw,
+
+}

@@ -1,0 +1,3 @@
+apt install git nginx weechat mutt lynx w3m hostapd isc-dhcp-server dnsmasq shadowsocks shadowsocks-libev privoxy proxychains tor torsocks tsocks network-manager rxvt-unicode vim tmux vsftpd
+
+apt update && apt -y upgrade && \

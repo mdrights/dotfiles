@@ -1,0 +1,53 @@
+#!/bin/sh
+# $XConsortium: xinitrc.cpp,v 1.4 91/08/22 11:41:34 rws Exp $
+
+userresources=$HOME/.Xresources
+usermodmap=$HOME/.Xmodmap
+sysresources=/etc/X11/xinit/.Xresources
+sysmodmap=/etc/X11/xinit/.Xmodmap
+
+# merge in defaults and keymaps
+
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+if [ -f $userresources ]; then
+    xrdb -merge $userresources
+fi
+
+if [ -f $usermodmap ]; then
+    xmodmap $usermodmap
+fi
+
+while true
+do
+      # VOL=$(amixer get Master | tail -1 | sed 's/.*\[\([0-9]*%\)\].*/\1/')
+       LOCALTIME=$(date +%Z\=%Y-%m-%dT%H:%M)
+      # OTHERTIME=$(TZ=Europe/London date +%Z\=%H:%M)
+       IP=$(/sbin/ip a |grep 'inet ' |grep -v 127 |awk '{print $2}')
+       TEMP="$(($(cat /sys/class/thermal/thermal_zone0/temp) / 1000))C"
+
+#       if cat /proc/acpi/battery/BAT1/state 1&> /dev/null 2&>1
+#       then
+	       BAT="$(cat /proc/acpi/battery/BAT1/state |awk '$1~/remaining/ { print $3 }') mAh"
+           xsetroot -name "$IP | $BAT | $TEMP | $LOCALTIME"
+#       else
+#           xsetroot -name "$IP $TEMP $LOCALTIME"
+#       fi
+       sleep 20s
+done &
+
+
+# Start the window manager:
+session=${1:-dwm}
+
+case $session in
+  dwm		) exec /usr/bin/dwm;;
+esac
+
+

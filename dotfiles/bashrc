@@ -1,0 +1,49 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# Use git prompt
+#source /usr/doc/git-2.22.0/contrib/completion/git-prompt.sh
+#PS1='[\u@\h \W$(__git_ps1 " (%s)")]\n\$ '
+
+#PS1='[\u@\h \W]\$ '
+PS1='$? [\w]
+\$ '
+
+# Shell options
+shopt -s checkwinsize
+shopt -s histappend
+shopt -s autocd
+shopt -s nocaseglob
+shopt -s extglob
+shopt -s nocasematch
+
+# alias ls='ls --color=auto'
+alias ls="ls $LS_OPTIONS"
+alias grep="grep --colour=auto"
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ll='ls -l'
+alias la='ls -A'
+#alias l='ls -CF'
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias gits='git status'
+
+export PATH=$HOME/bin:/sbin:/usr/local/sbin:$PATH
+export EDITOR=vim
+export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
+
+# make package searching easier on Slackware.
+lsp ()
+{
+    ls -1 "/var/log/packages/$@"* |xargs -i basename {}
+}
+

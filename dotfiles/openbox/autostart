@@ -1,0 +1,14 @@
+# Set wallpaper:
+feh --bg-scale ~/Desktop/slackware0.png &
+
+# Show system tray
+tint2 &
+
+# Show system info
+#conky &
+
+# NetworkManager
+nm-applet &
+
+# Volume control in system tray
+#volumeicon &

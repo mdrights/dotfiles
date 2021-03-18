@@ -1,0 +1,21 @@
+[Unit]
+Description=GitLab Runner
+After=syslog.target network.target
+ConditionFileIsExecutable=/usr/lib/gitlab-runner/gitlab-runner
+
+[Service]
+#Type=forking
+#User=gitlab-runner
+#Group=users
+Environment=IPFS_PATH=/opt/go-ipfs/ipfsrepo
+StartLimitInterval=5
+StartLimitBurst=10
+#ExecStart=/usr/lib/gitlab-runner/gitlab-runner "run" "--working-directory" "/home/gitlab-runner" "--config" "/etc/gitlab-runner/config.toml" "--service" "gitlab-runner" "--syslog" "--user" "gitlab-runner"
+ExecStart=/usr/lib/gitlab-runner/gitlab-runner "run" "--working-directory" "/home/gitlab-runner" "--config" "/etc/gitlab-runner/config.toml" "--service" "gitlab-runner" "--syslog" 
+
+
+Restart=always
+RestartSec=60
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,131 @@
+pipeline {
+  agent { node { label 'dind' } }
+  stages {
+      
+    stage('Work on AKS') {
+
+      steps {
+        script {   
+        properties([
+            parameters([
+                string(defaultValue: '', description: 'The repo you want to operate:', name: 'GIT_REPO', trim: false), 
+                choice(
+                    choices: ['dev', 'sit', 'uat', 'prod'], 
+                    description: 'The AKS namespace you want to operate:', 
+                    name: 'DESTENV')])
+        ])
+        }
+
+        checkout(
+            [$class: 'GitSCM', branches: [[name: '*/master']], 
+            doGenerateSubmoduleConfigurations: false, 
+            extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'tmsconfigmap']], 
+            submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'ee23c98b-bfb2-470b-b137-26c5d3be65ef', url: 'ssh://git@code.pruconnect.net:7999/pcatms/tmsconfigmap.git']]])
+
+        // INSERT ANOTHER REPO HERE IF YOU NEED TO CHECKOUT.
+
+        script {
+            def vaultAddr = 'https://vault.pru.intranet.asia'
+
+            if ( DESTENV == 'dev' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-dev-az1-devpruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-dev-az1-devpruexpert/token-sgrass-dev-az1-devpruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-dev-az1-devpruexpert'
+            }
+
+            if ( DESTENV == 'sit' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-dev-az1-pruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-dev-az1-pruexpert/token-sgrass-dev-az1-pruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-dev-az1-pruexpert'
+            }
+
+            if ( DESTENV == 'uat' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-osdvum-az1-sgrass-uat-az1-uatpruexpert'
+                env.vaultPath = 'kv2/sgrass/nprd/uat/osdvum/az1/sgrass-uat-az1-uatpruexpert/token-sgrass-uat-az1-uatpruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-uat-az1-uatpruexpert'
+            }
+
+            if ( DESTENV == 'prod' ) {
+                sh 'echo This goes to: ${DESTENV}'
+                env.vaultAppRole = 'apr-sgrass-namespace-kvadmin-r6eb4m-az1-sgrass-prd-az1-pruexpert'
+                env.vaultPath = 'kv2/sgrass/prod/prd/r6eb4m/az1/sgrass-prd-az1-pruexpert/token-sgrass-prd-az1-pruexpert-deployer'
+                env.KUBE_NAMESPACE = 'sgrass-prd-az1-pruexpert'
+            }
+
+            def vaultConfiguration = [
+                $class: 'VaultConfiguration',
+                vaultUrl: "${vaultAddr}",
+                vaultCredentialId: "${vaultAppRole}"
+            ]
+
+            def vaultSecrets = [
+                [ $class: 'VaultSecret', path: "${vaultPath}", secretValues: [
+                    // set the token as kubeconfig environment variable
+                    [ $class: 'VaultSecretValue', envVar: 'kubeconfig', vaultKey: "token" ]
+                ]]
+            ]
+ 
+            withVault([configuration: vaultConfiguration, vaultSecrets: vaultSecrets]) {
+              sh '''
+                set +x
+
+                echo "---- copy the kubeconfig into a file ----" 
+                echo "${kubeconfig}" > ${WORKSPACE}/kubeconfig
+                #cat ${WORKSPACE}/kubeconfig
+
+                echo "---- preparing options ----"
+                echo $KUBE_NAMESPACE
+                # export KUBE_NAMESPACE="sgrass-dev-az1-devpruexpert"
+                export KC_OPTS=${KC_OPTS}" --kubeconfig=${WORKSPACE}/kubeconfig"
+                export KC_OPTS=${KC_OPTS}" --insecure-skip-tls-verify=true"
+                export KC_OPTS=${KC_OPTS}" --namespace=${KUBE_NAMESPACE}"
+                 
+                echo "---- prepared options ----"
+                echo "---- preparing alias ----"
+                alias kc="kubectl ${KC_OPTS} $*"
+                echo "---- alias prepared ----"
+                 
+                echo "---- applying manifest ----"
+                 
+#### NOTE: WRITE YOUR OWN COMMANDS HERE: ####
+
+                export YAML_PATH="./tmsconfigmap/aksyaml/${GIT_REPO}/${DESTENV}"
+                #export YAML_PATH="./alpine"
+
+                echo ">> kc delete -f ${YAML_PATH}/k8s-deployment-services.yaml "
+                kc delete -f ${YAML_PATH}/k8s-deployment-services.yaml || true
+                #kc apply -f ${YAML_PATH}/k8s-deployment-services.yaml
+                 
+#### NOTE: WRITE YOUR OWN COMMANDS ABOVE ####
+
+                echo "---- manifest applied ----"
+                sleep 30
+                echo "---- checking result ----"
+                 
+                echo " >> Deployments "
+                kc get deployments
+                 
+                echo " >> Services"
+                kc get svc
+                 
+                echo " >> Ingress"
+                kc get ingress
+                 
+                echo " >> Pods"
+                kc get pods
+                 
+                
+                echo "---- Clean the kubeconfig ----"
+                rm ${WORKSPACE}/kubeconfig
+                echo "---- Done ----"
+              '''
+
+            }
+        }
+      }
+    }   
+  }
+}

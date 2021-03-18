@@ -1,0 +1,39 @@
+# This is an example for IceWM's hotkey definition file.
+#
+# Place your variants in @CFGDIR@ or in $HOME/.icewm
+# since modifications to this file will be discarded when you
+# (re)install icewm.
+#
+# A list of all valid keyboard symbols can be found in
+# /usr/include/X11/keysym.h, keysymdefs.h, XF86keysym.h, ...
+# You'll have to omit XK_ prefixs and to replace XF86XK_ prefixes by
+# XF86. Valid modifiers are Alt, Ctrl, Shift, Meta, Super and Hyper.
+#
+key "Alt+Ctrl+t"			st
+key "Alt+Ctrl+b"			xdg-open about:blank
+key "Alt+Ctrl+s"			xdg-open https://www.google.com
+
+key "Super+KP_Subtract"			pamixer -d 5
+key "Super+KP_Add"			pamixer -i 5
+
+# "Multimedia key" bindings for Xorg. Gather the keycodes of your
+# advanced function keys by watching the output of the xev command whilest
+# pressing those keys and map those symbols by using xmodmap.
+
+# Note: some of them might have unwanted side effects through concurrency with
+# other listeners like systemd for the suspend key events
+#
+# key "XF86Standby"			/bin/sh -c "{ sudo /usr/sbin/pm-suspend; } ||:"
+# key "XF86Sleep"				/bin/sh -c "{ sudo /usr/sbin/pm-suspend; } ||:"
+key "XF86AudioLowerVolume"		pamixer -d 5
+key "XF86AudioRaiseVolume"		pamixer -i 5
+key "XF86AudioMute"			pamixer -t
+key "XF86HomePage"			xdg-open about:blank
+key "XF86Search"			xdg-open https://www.google.com
+key "XF86Eject"				eject
+key "XF86Calculator"			/bin/sh -c "gnome-calculator || xcalc || ( type bc >/dev/null 2>&1 && xterm -e bc -l)"
+
+switchkey "Super+p"			icewm-menu-xrandr
+
+key "Alt+Ctrl+Up"			xbacklight -inc 10
+key "Alt+Ctrl+Down"			xbacklight -dec 10

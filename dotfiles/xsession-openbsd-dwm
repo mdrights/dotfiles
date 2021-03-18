@@ -1,0 +1,41 @@
+export ENV=$HOME/.kshrc
+
+export QT_IM_MODULE=fcitx
+export XIM=fcitx
+export XIM_PROGRAM=fcitx
+export GTK_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
+if [ -f /home/user/.profile ]; then . /home/user/.profile ; fi
+
+xsetroot -solid grey &
+
+fcitx &
+
+#xterm -bg black -fg white +sb -font 9x15 &
+#urxvt -bg black -fg white +sb -font 9x15 &
+/usr/local/bin/st &
+
+# Set monitors
+while true
+do
+    DATE=$(date +%Y-%m-%dT%H:%M)
+    BATT=$(sysctl hw.sensors.acpibat0.watthour3 |awk -F'=| ' '{ print $2 }')
+    MEMFREE=$(top -d 1 |grep Mem |awk '{ print $3 }')
+    CPU=$(top -d1 |grep CPU0 |awk '{ print $3 }')
+    WIFI=$(ifconfig rtwn0 |grep status |awk '{ print $2" "$3 }')
+    ETHER=$(ifconfig re0 |grep status |awk '{ print $2" "$3 }')
+
+    if [ "$WIFI" != "active " ] ; then WIFI="" ; fi
+    if [ "$ETHER" != "active " ] ; then ETHER="" ; fi
+
+    xsetroot -name "re0: $ETHER | rtwn0: $WIFI | CPU: $CPU | MEM: $MEMFREE | BATT: $BATT | $DATE"
+
+    sleep 60
+done &
+
+# dwm
+/usr/local/bin/dwm
+
+# icewm
+#/usr/local/bin/icewm-session
