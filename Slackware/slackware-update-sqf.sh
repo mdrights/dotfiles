@@ -3,13 +3,14 @@
 # AUTHOR    mdrights
 
 
-TAG_DIR='/mnt/hd/user/slackware-repo/slackware64-current/slackware64'
+TAG_DIR='/home/user/slackware-repo/slackware64-current/slackware64'
 
 ALL_PKG=$(cat $TAG_DIR/*/tagfile |awk -F: '{ print $1 }')
 
-SQF_DIR='/mnt/hd/user/repo/LiveSlak/sbopkg-queues'
+SQF_DIR='/home/user/repo/LiveSlak/sbopkg-queues'
+SQF_FILE='liveslak-full.sqf'
 
-SQF=$(cat $SQF_DIR/liveslak-full.sqf | egrep -v '^#|^$' |awk '{print $1}')
+SQF=$(cat $SQF_DIR/$SQF_FILE | egrep -v '^#|^$' |awk '{print $1}')
 
 for pkg in $SQF; do
 	#echo ">> $pkg: "
