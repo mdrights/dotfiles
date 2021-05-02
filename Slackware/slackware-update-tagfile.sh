@@ -34,7 +34,7 @@ while read -r line; do
     else
         echo "... pkg $PKG does not exist in the repo now."
 	fi
-done < <(cat ${UNWANT})
+done < <(cat ${UNWANT} | grep -v '^$\|^#')
 
 echo ">>> Done!"
 exit
