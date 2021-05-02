@@ -1,4 +1,7 @@
 #!/bin/bash
+# BRIEF     This script is to update my sqf file when there is newer tagfiles in the official Slackware repo.
+# AUTHOR    mdrights
+
 
 TAG_DIR='/mnt/hd/user/slackware-repo/slackware64-current/slackware64'
 
