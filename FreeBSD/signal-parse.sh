@@ -34,31 +34,28 @@ MSG_TIMESTAMP=($(cat ${MSG_FILE} | $JQ '.envelope.timestamp'))
 #echo ${MSG_TIMESTAMP[@]}
 
 MSG_BODY="$(cat ${MSG_FILE} | $JQ '.envelope.dataMessage.message')"
-MSG_BODY_NEW="$(echo "$MSG_BODY" |tr ' ' '-')"
+MSG_BODY_NEW=($(echo "$MSG_BODY" |tr ' ' '-'))
 #echo "${MSG_BODY}"
-#echo "${MSG_BODY_NEW}"
+#echo "${MSG_BODY_NEW[@]}"
 
 MSG_GROUP=($(cat ${MSG_FILE} | $JQ '.envelope.dataMessage.groupInfo.groupId'))
 #echo ${MSG_GROUP[@]}
 #echo
 
 Output() {
-
-    i=0
-    for m in ${MSG_BODY_NEW}; do
-        if [[ ${m} == "null" ]];then
-            i=$(($i + 1))
+        
+    for i in ${!MSG_BODY_NEW[@]}; do
+        if [[ ${MSG_BODY_NEW[i]} == "null" ]];then
             continue
         fi
         echo ">> FROM: ${MSG_SOURCE[i]}"
         TIME=$(date -r ${MSG_TIMESTAMP[i]::-3})    # BSD
         echo ">> TIME: ${TIME}"
-        echo ">>       ${m}"
+        echo ">>       ${MSG_BODY_NEW[i]}"
         echo ">> In GROUP: ${MSG_GROUP[i]}"
         echo
-        i=$(($i + 1))
     done
-        
+
 }
 Output
 
