@@ -9,19 +9,15 @@ JQ=$(which jq)
 MSG_FILE="/tmp/signal.msg"
 
 Parse_Group() {
-    declare -A GROUP_MAP
-    GROUP_FILE="$HOME/signal.groups"
+    GROUP_FILE="$HOME/tmp/signal.groups.json"
     GROUP_ID=($(cat ${GROUP_FILE} | jq '.[].id'))
     GROUP_NAME="$(cat ${GROUP_FILE} | jq '.[].name')"
+    GROUP_NAME=($(echo "$GROUP_NAME" |tr ' ' '-'))
 
-    for G in ${!GROUP_ID[@]}; do
-        GROUP_MAP[${GROUP_ID[$G]}]=${GROUP_NAME[$G]}
-    done
-
-    #echo ${GROUP_MAP[@]}
-    #echo ${!GROUP_MAP[@]}
+    #echo ${GROUP_ID[@]}
+    #echo ${GROUP_NAME[@]}
 }
-#Parse_Group
+Parse_Group
 
 
 echo "===== Start Parsing Messages ====="
@@ -52,7 +48,14 @@ Output() {
         TIME=$(date -r ${MSG_TIMESTAMP[i]::-3})    # BSD
         echo ">> TIME: ${TIME}"
         echo ">>       ${MSG_BODY_NEW[i]}"
-        echo ">> In GROUP: ${MSG_GROUP[i]}"
+        if [[ ${MSG_GROUP[i]} != "null" ]] ; then
+            for g in ${!GROUP_ID[@]}; do
+                if [[ ${GROUP_ID[g]} == ${MSG_GROUP[i]} ]]; then
+                    echo ">> In GROUP: ${GROUP_NAME[g]}"
+                    #echo ">> In GROUP: Unknown"
+                fi
+            done
+        fi
         echo
     done
 
