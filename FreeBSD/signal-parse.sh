@@ -52,9 +52,10 @@ Output() {
             for g in ${!GROUP_ID[@]}; do
                 if [[ ${GROUP_ID[g]} == ${MSG_GROUP[i]} ]]; then
                     echo ">> In GROUP: ${GROUP_NAME[g]}"
-                    #echo ">> In GROUP: Unknown"
+                    gotcha=1
                 fi
             done
+            [[ $gotcha -ne 1 ]] && echo ">> In GROUP: Unknown"
         fi
         echo
     done
