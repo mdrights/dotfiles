@@ -1,0 +1,62 @@
+#$OpenBSD: dot.cshrc,v 1.8 2018/02/02 02:29:54 yasuoka Exp $
+#
+# csh initialization
+
+alias df	df -k
+alias du	du -k
+alias f		finger
+alias h		'history -r | more'
+alias j		jobs -l
+alias la	ls -a
+alias lf	ls -FA
+alias ll	ls -lsA
+alias tset	'set noglob histchars=""; eval `\tset -s \!*`; unset noglob histchars'
+alias z		suspend
+alias gits	git status
+alias ss        netstat -anp 
+
+
+setenv	EDITOR	vi
+setenv	PAGER	less
+setenv  TERM 	xterm
+setenv LANG en_US.UTF-8
+#setenv JAVA_HOME /usr/local/jdk-1.8.0
+setenv JAVA_HOME /usr/local/jdk-11
+#setenv CLASSPATH .:/$HOME/bin/signal-cli-0.7.1/lib:/usr/local/jdk-11/lib
+
+set path = (${JAVA_HOME}/bin ~/.local/bin ~/bin/node_modules/.bin ~/bin /bin /sbin /usr/{bin,sbin,X11R6/bin,local/bin,local/sbin,games})
+
+if ($?prompt) then
+	# An interactive shell -- set some stuff up
+	
+#	bindkey -v
+
+	set filec
+	set ignoreeof
+	set autolist = ambiguous
+	set history = 100
+#	set savehist = (100 merge)
+	set histdup = prev
+
+	set mail = (/var/mail/$USER)
+	set mch = `hostname -s`
+	set correct = all
+
+	alias prompt 'set prompt = "$mch:q"":$cwd:t {\!} "'
+	alias cd 'cd \!*; prompt'
+	alias chdir 'cd \!*; prompt'
+	alias popd 'popd \!*; prompt'
+	alias pushd 'pushd \!*; prompt'
+	alias gits 'git status'
+
+        if ( $?tcsh ) then
+            bindkey "^W" backward-delete-word
+            bindkey -k up history-search-backward
+            bindkey -k down history-search-forward
+        endif
+
+	cd .
+	umask 22
+endif
+
+if (-x /usr/games/fortune) /usr/games/fortune
