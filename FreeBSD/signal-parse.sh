@@ -7,9 +7,10 @@ set -eu
 
 JQ=$(which jq)
 MSG_FILE="/tmp/signal.msg"
+gotcha=0
 
 Parse_Group() {
-    GROUP_FILE="$HOME/tmp/signal.groups.json"
+    GROUP_FILE="$HOME/src/Signal/signal.groups.json"
     GROUP_ID=($(cat ${GROUP_FILE} | jq '.[].id'))
     GROUP_NAME="$(cat ${GROUP_FILE} | jq '.[].name')"
     GROUP_NAME=($(echo "$GROUP_NAME" |tr ' ' '-'))
@@ -61,6 +62,6 @@ Output() {
     done
 
 }
-Output
+Output |more
 
 exit
