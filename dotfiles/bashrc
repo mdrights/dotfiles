@@ -20,9 +20,10 @@ PS1='$? [\w]
 shopt -s checkwinsize
 shopt -s histappend
 shopt -s autocd
-shopt -s nocaseglob
 shopt -s extglob
 shopt -s nocasematch
+shopt -s globstar
+shopt -s nocaseglob
 
 # alias ls='ls --color=auto'
 alias ls="ls $LS_OPTIONS"
@@ -36,6 +37,8 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias gits='git status'
+alias gitc='git checkout'
+alias k='kubectl --insecure-skip-tls-verify'
 
 export PATH=$HOME/bin:/sbin:/usr/local/sbin:$PATH
 export EDITOR=vim
