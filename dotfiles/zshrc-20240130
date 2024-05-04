@@ -1,0 +1,105 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=2000
+SAVEHIST=1000
+setopt autocd
+setopt appendhistory share_history autocd extendedglob nomatch notify
+unsetopt beep
+
+#bindkey -e
+bindkey -v
+bindkey '^R' history-incremental-search-backward
+bindkey '^i' expand-or-complete-prefix
+#bindkey  "\e[2~" quoted-insert
+# End of lines configured by zsh-newuser-install
+#bindkey '^D' backward-word
+
+# ZSH completions
+FPATH=/usr/local/homebrew/share/zsh-completions:$FPATH
+
+# The following lines were added by compinstall
+zstyle :compinstall filename '/Users/user/.zshrc'
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+# Added by user here.
+REPORTTIME=10
+setopt hist_ignore_all_dups appendhistory share_history
+setopt auto_cd extended_glob ksh_glob nomatch notify
+unsetopt beep
+unsetopt CASE_GLOB
+
+autoload zmv
+
+alias ls="ls -F $LS_OPTIONS"
+alias ll="ls -Al $LS_OPTIONS"
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias grep="grep --colour=auto"
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias gits='git status'
+alias gitc='git checkout'
+#alias gpg='gpg2'
+alias torssh='ssh -o ProxyCommand="ncat --proxy-type socks5 --proxy 127.0.0.1:9050 %h %p"'
+alias k='kubectl --insecure-skip-tls-verify'
+
+
+#%{\e[0;31m%}%m%{\e[0m%}
+# source /usr/share/git-core/contrib/completion/git-prompt.sh		#on Debian
+# source /usr/doc/git-2.20.1/contrib/completion/git-prompt.sh		#on Slackware
+source $HOME/.git-prompt.sh	
+
+#setopt PROMPT_SUBST ; PS1='[%n@%m %c$(__git_ps1 " (%s)")]
+setopt PROMPT_SUBST ; PS1='[macOS@ [%D{%T}] %c$(__git_ps1 " (%s)")]
+%# '
+export PS1
+#export PS1="%? [%~]
+# %# "
+
+## export https_proxy=http://localhost:8118
+export EDITOR=vim
+export PROXYCHAINS_CONF_FILE=~/.proxychains.conf
+#export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_251.jdk/Contents/Home
+#export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$CLASSPATH
+export ANDROID_HOME=/Users/user/Library/Android
+export PYTHONPATH=$HOME/Library/Python/3.9/lib/python/site-packages:/usr/local/homebrew/lib/python3.9/site-packages
+
+# Kubectl auto-complete (got from `kubectl completion zsh`)
+[[ $commands[kubectl] ]] && source $HOME/.kubectl-completion.zsh
+
+# Hashicorp Vault commpletion
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/homebrew/bin/vault vault
+
+# ZSH Syntax Highlighting 
+#source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/local/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Tmux
+# If not running interactively, do not do anything
+#[[ $- != *i* ]] && return
+#[[ -z "$TMUX" ]] && exec tmux
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/user/src/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/user/src/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/user/src/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/user/src/google-cloud-sdk/completion.zsh.inc'; fi
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/user/.sdkman"
+[[ -s "/Users/user/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/user/.sdkman/bin/sdkman-init.sh"
+
+export PATH=$HOME/bin:$HOME/bin/node_modules/.bin:/usr/local/homebrew/bin:/usr/local/homebrew/sbin:$PATH
+
+export PATH=$HOME/bin/apache-maven-3.6.3/bin:$PATH
+export PATH=$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH
+export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+export PATH="/usr/local/Homebrew/opt/redis@4.0/bin:$PATH"
+#export PATH="/usr/local/homebrew/opt/node@18/bin:$PATH"
+# postgres tools
+export PATH="/usr/local/homebrew/opt/libpq/bin:$PATH"
+

@@ -1,0 +1,174 @@
+" My customizations
+"set nu
+set go=
+colorscheme desert
+" set guifont=Courier_New
+set guifont=Go\ Mono\ for\ Powerline\ 14
+set nocompatible
+set encoding=utf-8
+set showcmd
+"winpos 5 5
+"set lines=80 columns=155
+set termencoding=utf-8
+set encoding=utf-8
+set clipboard+=unnamed
+set nobackup
+set autoindent
+set cindent
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set ignorecase
+set showmatch
+set hlsearch
+set incsearch
+autocmd InsertLeave * se cul		"underlining when leaving edit mode.
+autocmd InsertEnter * se nocul
+"" Jump to the last position viewed
+au BufWinLeave * mkview
+au BufWinEnter * silent loadview
+
+
+""Highlighting & Indenting
+syntax on
+let python_highlight_all=1
+set list lcs=tab:\|\ 
+set expandtab
+let g:markdown_fenced_languages=['html', 'python', 'bash=sh']
+let g:markdown_syntax_conceal=1
+let g:vim_markdown_frontmatter=1
+"let g:vim_markdown_folding_disabled=1
+let g:indentLine_char_list=['|', '¦', '┆', '┊']
+let g:terraform_align=1
+
+au BufRead,BufNewFile *.{md,mdown,mkd,mkdn,markdown,mdwn} set filetype=markdown
+" au BufRead,BufNewFile *rc set filetype=sh
+au BufRead,BufNewFile *.conf set filetype=dosini
+au BufRead,BufNewFile .textlintrc set filetype=json
+au BufRead,BufNewFile config,*.kubeconfig set filetype=yaml
+au BufRead,BufNewFile *.jenkins,*.groovy set filetype=jenkinsfile
+au BufRead,BufNewFile *.env set filetype=javascript
+au BufRead,BufNewFile *.tf* set filetype=tf
+autocmd BufEnter *.tf* colorscheme desert
+
+
+"" Punc auto-complete
+:inoremap ( ()<ESC>i
+:inoremap ) <c-r>=ClosePair(')')<CR>
+:inoremap { {}<ESC>i
+:inoremap } <c-r>=ClosePair('}')<CR>
+:inoremap [ []<ESC>i
+:inoremap ] <c-r>=ClosePair(']')<CR>
+:inoremap " ""<ESC>i
+:inoremap ' ''<ESC>i
+
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
+nnoremap <space> za
+
+
+" ==== PLUGINS ====
+"
+" Status Line
+set laststatus=2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#ale#enabled = 1
+
+
+""" Statusline if no Powerline
+" set statusline=%f\ -\ %y
+" set statusline+=\ -\ 
+" set statusline+=%l    " Current line
+" set statusline+=/    " Separator
+" set statusline+=%L   " Total lines
+set statusline+=\ (%{strftime(\"%H:%M\ %d/%m/%Y\",getftime(expand(\"%:p\")))})  " last modified timestamp
+
+" Syntastic
+""set statusline+=%#warningmsg#
+""set statusline+=%{SyntasticStatuslineFlag()}
+""set statusline+=%*
+""
+""let g:syntastic_always_populate_loc_list = 1
+""let g:syntastic_auto_loc_list = 1
+""let g:syntastic_check_on_open = 0
+""let g:syntastic_check_on_wq = 0
+
+" NERDTree
+" autocmd vimenter * NERDTree
+"map <C-n> :NERDTreeToggle<CR>
+nnoremap <silent> <F3> :NERDTreeToggle<CR>
+
+"" Taglist
+"nnoremap <silent> <F4> :TlistToggle<CR>
+"let Tlist_Ctags_Cmd="/usr/local/homebrew/bin/ctags"
+
+" ALE
+nnoremap <silent> <F2> :ALEInfo<CR>
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+let g:ale_linters = {
+            \ 'python': ['pylint'],
+            \ 'yaml': ['swaglint'],
+            \ 'javascript': ['eslint'],
+            \ 'sh': ['shellcheck'],
+            \ 'markdown': [],
+            \ 'text': [],}
+let g:alw_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
+" call deoplete#custom#option('sources', {'_': ['ale'],})
+let g:ale_completion_enabled = 1
+set omnifunc=ale#completion#OmniFunc
+
+
+" Vundle
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+	" alternatively, pass a path where Vundle should install plugins
+	"call vundle#begin('~/some/path/here')
+
+	" let Vundle manage Vundle, required
+	Plugin 'VundleVim/Vundle.vim'
+
+	Plugin 'tmhedberg/SimpylFold'
+	Plugin 'vim-scripts/indentpython.vim'
+	"Plugin 'vim-syntastic/syntastic'
+	"Plugin 'nvie/vim-flake8'
+	Plugin 'jnurmine/Zenburn'
+	Plugin 'scrooloose/nerdtree'
+	"Plugin 'kien/ctrlp.vim'
+	Plugin 'tpope/vim-fugitive'
+        "Plugin 'vim-scripts/taglist.vim'
+	Plugin 'vim-airline/vim-airline'
+	Plugin 'Yggdroot/indentLine'
+	Plugin 'dense-analysis/ale'
+	Plugin 'stephpy/vim-yaml'
+	Plugin 'tpope/vim-markdown'
+	Plugin 'elzr/vim-json'
+        Plugin 'martinda/Jenkinsfile-vim-syntax'
+	"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+	"Plugin 'Valloric/YouCompleteMe'
+	Plugin 'hashivim/vim-terraform'
+	Plugin 'andymass/vim-matchup'
+
+	" All of your Plugins must be added before the following line
+	call vundle#end()            " required
+	filetype plugin indent on    " required
+	" To ignore plugin indent changes, instead use:
+	"filetype plugin on
+	"
+	" Brief help
+	" :PluginList       - lists configured plugins
+	" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+	" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+	" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+	"
+	" see :h vundle for more details or wiki for FAQ
+	" Put your non-Plugin stuff after this line
